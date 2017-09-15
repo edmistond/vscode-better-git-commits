@@ -1,5 +1,4 @@
 import * as simpleGit from "simple-git";
-import * as _ from "lodash";
 
 export class gitHelper {
   private repositoryDirectory: string;
@@ -20,16 +19,11 @@ export class gitHelper {
     });
   }
 
-  commit(message: string) {
+  commit(message: string[]) {
     let git = this.sGit;
-    let parsedMessage: string[] = message.split("\n");
-    if (parsedMessage.length > 1) {
-      parsedMessage = _.filter(parsedMessage, function(m: string) {
-        return !m.startsWith("#");
-      });
-    }
+
     return new Promise(function(resolve, reject) {
-      git.commit(parsedMessage, function(err, result) {
+      git.commit(message, function(err, result) {
         if (err) return reject(err);
         return resolve(result);
       });
