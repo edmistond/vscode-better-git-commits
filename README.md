@@ -1,65 +1,26 @@
-# bettergitcommits README
+# bettergitcommits
 
-This is the README for your extension "bettergitcommits". After writing up a brief description, we recommend including the following sections.
+This is a commit message editor for Visual Studio Code, inspired by Magit for
+Emacs. I personally like to be able to put in detailed commit messages, and the
+small textbox for entering them in Visual Studio Code's native Git interface
+discourages this.
 
-## Features
+This extension operates in a very straightforward way - on running the 'Show Git
+Commit Editor' command, it will create a new commit message in your temporary
+directory, load the file, and switch the active editor to it. You enter your
+commit message, then execute 'Run Git Commit' and it will save the file (if you
+haven't already) and execute a git commit -F specifying your temporary file as
+the source of the message.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+If you want to install locally without using the VS Marketplace, you can clone
+it into your `~/.vscode/extensions` directory.
 
-For example if there is an image subfolder under your extension project workspace:
+Currently, no keyboard shortcuts are bound so as to avoid stepping on any
+existing ones. You may bind whichever shortcuts you prefer to
+`bettercommits.showCommitScreen` and `bettercommits.executeCommit`.
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+The extension activates when the Show Commit Editor command is run. Executing a
+commit should only work against a `git-commit` language buffer. If no files are
+staged or no message is supplied, the commit operation will abort. Unlike the
+built-in Git interface, it _will not_ automatically stage files if none were
+staged.
