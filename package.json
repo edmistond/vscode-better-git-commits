@@ -1,8 +1,8 @@
 {
     "name": "bettergitcommits",
     "displayName": "BetterGitCommits",
-    "description": "Magit-inspired Git commit editing window",
-    "version": "0.0.1",
+    "description": "⚡️ Magit-inspired Git commit message editing",
+    "version": "0.5",
     "publisher": "davidedmiston",
     "engines": {
         "vscode": "^1.16.0"
@@ -18,7 +18,7 @@
         "commands": [
             {
                 "command": "bettercommits.showCommitScreen",
-                "title": "Better Commits: Show Git Commit Screen"
+                "title": "Better Commits: Show Git Commit Editor"
             },
             {
                 "command": "bettercommits.executeCommit",
