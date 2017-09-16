@@ -29,4 +29,20 @@ export class gitHelper {
       });
     });
   }
+
+  commitRaw(messageFile: string) {
+    let git = this.sGit;
+    return new Promise((resolve, reject) => {
+      git.raw(
+        [
+          "commit",
+          "-F",
+          messageFile
+        ], (err, result) => {
+          if (err) return reject(err);
+          return resolve(result);
+        }
+      )
+    });
+  }
 }
