@@ -1,6 +1,4 @@
 "use strict";
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import {
   Disposable,
@@ -13,9 +11,6 @@ import { gitHelper } from "./gitHelper";
 import os = require("os");
 import fs = require("fs");
 import path = require("path");
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 
 function getStagedFiles(files) {
   let stagedFiles: any = files.filter(file => file.index !== " ");
@@ -79,9 +74,10 @@ async function showCommitScreen() {
   }
 
   let commitMessageTempFilePath: string = getTmpFilePath();
-  let commitMessageContents: string = parseStatusInfo(status);
+  // TODO: add this back in after I work out how to select and delete the status info lines...
+  // let commitMessageContents: string = parseStatusInfo(status);
 
-  await createTmpFile(commitMessageTempFilePath, commitMessageContents);
+  await createTmpFile(commitMessageTempFilePath, "");
 
   let commitDisplay = await vscode.workspace.openTextDocument(
     commitMessageTempFilePath
@@ -106,7 +102,6 @@ async function executeCommit() {
   }
 
   let commitMessage: string[] = activeDocument.getText().split("\n");
-  commitMessage = commitMessage.filter(line => !line.startsWith("#"));
 
   if (commitMessage.every(line => line === "")) {
     return vscode.window.showErrorMessage(
@@ -121,9 +116,12 @@ async function executeCommit() {
     return vscode.window.showErrorMessage("No files are currently staged.");
   }
 
+  // Since we `git commit -F` using the tempfile, need to save our work.
+  await activeDocument.save();
+  
   let commitResult: any;
   try {
-    commitResult = await gh.commit(commitMessage);
+    commitResult = await gh.commitRaw(activeDocument.fileName);
   } catch (e) {
     await vscode.window.showErrorMessage(
       "Error running commit, please see output console."
@@ -132,7 +130,6 @@ async function executeCommit() {
     return;
   }
 
-  await activeDocument.save(); // save the file so we don't get prompted
   await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
 }
 
