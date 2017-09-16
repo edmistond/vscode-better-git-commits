@@ -2,8 +2,17 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { Disposable, TextDocument } from "vscode";
+import {
+  Disposable,
+  TextDocument,
+  Position,
+  TextEditor,
+  Selection
+} from "vscode";
 import { gitHelper } from "./gitHelper";
+import os = require("os");
+import fs = require("fs");
+import path = require("path");
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -32,6 +41,31 @@ function parseStatusInfo(statusSummary: any): string {
   return result;
 }
 
+function getTmpFilePath(): string {
+  return path.normalize(path.join(os.tmpdir(), "COMMIT_EDITMSG"));
+}
+
+function deleteTmpFile(path: string) {
+  return new Promise((resolve, reject) => {
+    fs.unlink(path, err => {
+      if (err) reject();
+      resolve();
+    });
+  });
+}
+
+async function createTmpFile(filePath: string, contents: string) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filePath, contents, err => {
+      if (err) {
+        console.log(`Error writing temp file: ${err}`);
+        reject(err);
+      }
+      resolve();
+    });
+  });
+}
+
 async function showCommitScreen() {
   let gh = new gitHelper(vscode.workspace.rootPath);
   let status: any;
@@ -44,12 +78,22 @@ async function showCommitScreen() {
     return;
   }
 
-  let commitDisplay: TextDocument = await vscode.workspace.openTextDocument({
-    content: parseStatusInfo(status),
-    language: "git-commit"
-  });
+  let commitMessageTempFilePath: string = getTmpFilePath();
+  let commitMessageContents: string = parseStatusInfo(status);
 
-  await vscode.window.showTextDocument(commitDisplay);
+  await createTmpFile(commitMessageTempFilePath, commitMessageContents);
+
+  let commitDisplay = await vscode.workspace.openTextDocument(
+    commitMessageTempFilePath
+  );
+
+  let document: TextEditor = await vscode.window.showTextDocument(
+    commitDisplay
+  );
+
+  // Set a selection with no actual range to move the cursor to the top of the file.
+  const position: Position = new Position(0, 0);
+  document.selections = [new Selection(position, position)];
 }
 
 async function executeCommit() {
@@ -88,6 +132,7 @@ async function executeCommit() {
     return;
   }
 
+  await activeDocument.save(); // save the file so we don't get prompted
   await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
 }
 
