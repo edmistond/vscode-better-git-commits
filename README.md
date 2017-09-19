@@ -13,7 +13,8 @@ haven't already) and execute a git commit -F specifying your temporary file as
 the source of the message.
 
 If you want to install locally without using the VS Marketplace, you can clone
-it into your `~/.vscode/extensions` directory.
+it into your `~/.vscode/extensions` directory, then run `npm install` and `npm
+compile`.
 
 Currently, no keyboard shortcuts are bound so as to avoid stepping on any
 existing ones. You may bind whichever shortcuts you prefer to
